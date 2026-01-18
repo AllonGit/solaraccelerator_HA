@@ -147,17 +147,29 @@
       "entities_sent": {
         "name": "Wysłane encje"
       },
-      "current_price": {
-        "name": "Aktualna cena energii"
+      "current_buy_price": {
+        "name": "Cena zakupu energii"
       },
-      "min_price": {
-        "name": "Min cena dziś"
+      "min_buy_price": {
+        "name": "Min cena zakupu dziś"
       },
-      "max_price": {
-        "name": "Max cena dziś"
+      "max_buy_price": {
+        "name": "Max cena zakupu dziś"
       },
-      "average_price": {
-        "name": "Średnia cena dziś"
+      "average_buy_price": {
+        "name": "Średnia cena zakupu dziś"
+      },
+      "current_sell_price": {
+        "name": "Cena sprzedaży energii"
+      },
+      "min_sell_price": {
+        "name": "Min cena sprzedaży dziś"
+      },
+      "max_sell_price": {
+        "name": "Max cena sprzedaży dziś"
+      },
+      "average_sell_price": {
+        "name": "Średnia cena sprzedaży dziś"
       },
       "is_cheap": {
         "name": "Tania energia"

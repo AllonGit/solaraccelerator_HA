@@ -147,17 +147,29 @@
       "entities_sent": {
         "name": "Entities Sent"
       },
-      "current_price": {
-        "name": "Current Energy Price"
+      "current_buy_price": {
+        "name": "Buy Energy Price"
       },
-      "min_price": {
-        "name": "Min Price Today"
+      "min_buy_price": {
+        "name": "Min Buy Price Today"
       },
-      "max_price": {
-        "name": "Max Price Today"
+      "max_buy_price": {
+        "name": "Max Buy Price Today"
       },
-      "average_price": {
-        "name": "Average Price Today"
+      "average_buy_price": {
+        "name": "Average Buy Price Today"
+      },
+      "current_sell_price": {
+        "name": "Sell Energy Price"
+      },
+      "min_sell_price": {
+        "name": "Min Sell Price Today"
+      },
+      "max_sell_price": {
+        "name": "Max Sell Price Today"
+      },
+      "average_sell_price": {
+        "name": "Average Sell Price Today"
       },
       "is_cheap": {
         "name": "Cheap Energy"

@@ -44,11 +44,17 @@ async def async_setup_entry(
         SolarAcceleratorLastSentSensor(hass, entry, coordinator_data),
         SolarAcceleratorNextScheduledSensor(hass, entry, coordinator_data),
         SolarAcceleratorEntitiesCountSensor(hass, entry, coordinator_data),
-        # Price sensors
-        SolarAcceleratorCurrentPriceSensor(hass, entry, coordinator_data),
-        SolarAcceleratorMinPriceSensor(hass, entry, coordinator_data),
-        SolarAcceleratorMaxPriceSensor(hass, entry, coordinator_data),
-        SolarAcceleratorAveragePriceSensor(hass, entry, coordinator_data),
+        # Buy price sensors
+        SolarAcceleratorCurrentBuyPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorMinBuyPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorMaxBuyPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorAverageBuyPriceSensor(hass, entry, coordinator_data),
+        # Sell price sensors
+        SolarAcceleratorCurrentSellPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorMinSellPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorMaxSellPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorAverageSellPriceSensor(hass, entry, coordinator_data),
+        # Price metadata sensors
         SolarAcceleratorIsCheapSensor(hass, entry, coordinator_data),
         SolarAcceleratorIsExpensiveSensor(hass, entry, coordinator_data),
         SolarAcceleratorPriceProviderSensor(hass, entry, coordinator_data),
@@ -186,26 +192,26 @@ class SolarAcceleratorEntitiesCountSensor(SolarAcceleratorSensorBase):
 
 # Price sensors
 
-class SolarAcceleratorCurrentPriceSensor(SolarAcceleratorSensorBase):
-    """Sensor for current energy price."""
+class SolarAcceleratorCurrentBuyPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for current buy energy price."""
 
-    _attr_icon = "mdi:currency-usd"
+    _attr_icon = "mdi:cash-minus"
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = "zł/kWh"
-    _attr_translation_key = "current_price"
+    _attr_translation_key = "current_buy_price"
 
     def __init__(
         self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
     ) -> None:
         """Initialize."""
-        super().__init__(hass, entry, coordinator_data, "current_price")
-        self._attr_name = "Aktualna cena energii"
+        super().__init__(hass, entry, coordinator_data, "current_buy_price")
+        self._attr_name = "Cena zakupu energii"
 
     @property
     def native_value(self) -> float | None:
         """Return the state."""
         prices = self.coordinator_data.get("prices", {})
-        return prices.get("current_price")
+        return prices.get("current_buy_price")
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -215,74 +221,75 @@ class SolarAcceleratorCurrentPriceSensor(SolarAcceleratorSensorBase):
             "is_cheap": prices.get("is_cheap"),
             "is_expensive": prices.get("is_expensive"),
             "current_hour": prices.get("current_hour"),
+            "currency": prices.get("currency"),
             "updated_at": prices.get("updated_at"),
         }
 
 
-class SolarAcceleratorMinPriceSensor(SolarAcceleratorSensorBase):
-    """Sensor for minimum price today."""
+class SolarAcceleratorMinBuyPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for minimum buy price today."""
 
     _attr_icon = "mdi:arrow-down-bold"
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = "zł/kWh"
-    _attr_translation_key = "min_price"
+    _attr_translation_key = "min_buy_price"
 
     def __init__(
         self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
     ) -> None:
         """Initialize."""
-        super().__init__(hass, entry, coordinator_data, "min_price")
-        self._attr_name = "Min cena dziś"
+        super().__init__(hass, entry, coordinator_data, "min_buy_price")
+        self._attr_name = "Min cena zakupu dziś"
 
     @property
     def native_value(self) -> float | None:
         """Return the state."""
         prices = self.coordinator_data.get("prices", {})
-        return prices.get("min_price")
+        return prices.get("min_buy_price")
 
 
-class SolarAcceleratorMaxPriceSensor(SolarAcceleratorSensorBase):
-    """Sensor for maximum price today."""
+class SolarAcceleratorMaxBuyPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for maximum buy price today."""
 
     _attr_icon = "mdi:arrow-up-bold"
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = "zł/kWh"
-    _attr_translation_key = "max_price"
+    _attr_translation_key = "max_buy_price"
 
     def __init__(
         self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
     ) -> None:
         """Initialize."""
-        super().__init__(hass, entry, coordinator_data, "max_price")
-        self._attr_name = "Max cena dziś"
+        super().__init__(hass, entry, coordinator_data, "max_buy_price")
+        self._attr_name = "Max cena zakupu dziś"
 
     @property
     def native_value(self) -> float | None:
         """Return the state."""
         prices = self.coordinator_data.get("prices", {})
-        return prices.get("max_price")
+        return prices.get("max_buy_price")
 
 
-class SolarAcceleratorAveragePriceSensor(SolarAcceleratorSensorBase):
-    """Sensor for average price today."""
+class SolarAcceleratorAverageBuyPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for average buy price today."""
 
     _attr_icon = "mdi:chart-line"
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = "zł/kWh"
-    _attr_translation_key = "average_price"
+    _attr_translation_key = "average_buy_price"
 
     def __init__(
         self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
     ) -> None:
         """Initialize."""
-        super().__init__(hass, entry, coordinator_data, "average_price")
-        self._attr_name = "Średnia cena dziś"
+        super().__init__(hass, entry, coordinator_data, "average_buy_price")
+        self._attr_name = "Średnia cena zakupu dziś"
 
     @property
     def native_value(self) -> float | None:
         """Return the state."""
         prices = self.coordinator_data.get("prices", {})
-        return prices.get("average_price")
+        return prices.get("average_buy_price")
 
 
 class SolarAcceleratorIsCheapSensor(SolarAcceleratorSensorBase):
@@ -350,6 +357,106 @@ class SolarAcceleratorPriceProviderSensor(SolarAcceleratorSensorBase):
         return {
             "prices_last_update": self.coordinator_data.get("prices_last_update"),
         }
+
+
+# Sell price sensors
+
+class SolarAcceleratorCurrentSellPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for current sell energy price."""
+
+    _attr_icon = "mdi:cash-plus"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "current_sell_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "current_sell_price")
+        self._attr_name = "Cena sprzedaży energii"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("current_sell_price")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra state attributes."""
+        prices = self.coordinator_data.get("prices", {})
+        return {
+            "current_hour": prices.get("current_hour"),
+            "currency": prices.get("currency"),
+            "updated_at": prices.get("updated_at"),
+        }
+
+
+class SolarAcceleratorMinSellPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for minimum sell price today."""
+
+    _attr_icon = "mdi:arrow-down-bold"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "min_sell_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "min_sell_price")
+        self._attr_name = "Min cena sprzedaży dziś"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("min_sell_price")
+
+
+class SolarAcceleratorMaxSellPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for maximum sell price today."""
+
+    _attr_icon = "mdi:arrow-up-bold"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "max_sell_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "max_sell_price")
+        self._attr_name = "Max cena sprzedaży dziś"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("max_sell_price")
+
+
+class SolarAcceleratorAverageSellPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for average sell price today."""
+
+    _attr_icon = "mdi:chart-line"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "average_sell_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "average_sell_price")
+        self._attr_name = "Średnia cena sprzedaży dziś"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("average_sell_price")
 
 
 def convert_value(value: str | None, entity_key: str) -> float | int | bool | str | None:
@@ -490,10 +597,20 @@ async def async_fetch_prices(
             if resp.status == 200:
                 data = await resp.json()
                 coordinator_data["prices"] = {
-                    "current_price": data.get("current_price"),
-                    "min_price": data.get("min_price"),
-                    "max_price": data.get("max_price"),
-                    "average_price": data.get("average_price"),
+                    # Ceny zakupu
+                    "current_buy_price": data.get("current_buy_price"),
+                    "min_buy_price": data.get("min_buy_price"),
+                    "max_buy_price": data.get("max_buy_price"),
+                    "average_buy_price": data.get("average_buy_price"),
+                    # Ceny sprzedaży
+                    "current_sell_price": data.get("current_sell_price"),
+                    "min_sell_price": data.get("min_sell_price"),
+                    "max_sell_price": data.get("max_sell_price"),
+                    "average_sell_price": data.get("average_sell_price"),
+                    # Metadane
+                    "currency": data.get("currency"),
+                    "unit": data.get("unit"),
+                    "current_hour": data.get("current_hour"),
                     "is_cheap": data.get("is_cheap"),
                     "is_expensive": data.get("is_expensive"),
                     "provider": data.get("provider"),
