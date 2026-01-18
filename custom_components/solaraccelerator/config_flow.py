@@ -1,6 +1,7 @@
 """Config flow for Solar Accelerator integration."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
@@ -52,32 +53,46 @@ async def async_validate_api_key(
         server_url = server_url.rstrip("/")
         endpoint = f"{server_url}{API_PUSH_ENDPOINT}"
 
+        _LOGGER.debug("Validating API key at: %s", endpoint)
+
         # Send a minimal test request to validate the API key
         async with session.post(
             endpoint,
             json={
                 "timestamp": "2000-01-01T00:00:00Z",
-                "entities": {},
+                "entities": {
+                    "pv1_power": 0,
+                },
             },
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
             },
-            timeout=aiohttp.ClientTimeout(total=15),
+            timeout=aiohttp.ClientTimeout(total=30),
         ) as resp:
-            if resp.status == 200:
+            text = await resp.text()
+            _LOGGER.debug("API response: status=%s, body=%s", resp.status, text[:200])
+
+            if resp.status in (200, 201):
                 return {"success": True}
             elif resp.status == 401:
                 return {"success": False, "error": "invalid_api_key"}
+            elif resp.status == 403:
+                return {"success": False, "error": "invalid_api_key"}
             else:
-                text = await resp.text()
                 _LOGGER.error("API validation failed: %s - %s", resp.status, text)
                 return {"success": False, "error": "cannot_connect"}
+    except aiohttp.ClientConnectorError as e:
+        _LOGGER.error("Connection error to %s: %s", server_url, e)
+        return {"success": False, "error": "cannot_connect"}
     except aiohttp.ClientError as e:
-        _LOGGER.error("Connection error: %s", e)
+        _LOGGER.error("Client error: %s", e)
+        return {"success": False, "error": "cannot_connect"}
+    except asyncio.TimeoutError:
+        _LOGGER.error("Connection timeout to %s", server_url)
         return {"success": False, "error": "cannot_connect"}
     except Exception as e:
-        _LOGGER.error("API validation failed: %s", e)
+        _LOGGER.exception("API validation failed: %s", e)
         return {"success": False, "error": "unknown"}
 
 
