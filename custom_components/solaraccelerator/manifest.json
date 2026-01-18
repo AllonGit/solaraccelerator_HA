@@ -1,0 +1,12 @@
+{
+  "domain": "solaraccelerator",
+  "name": "SolarAccelerator",
+  "codeowners": ["@alanwilter"],
+  "config_flow": true,
+  "documentation": "https://github.com/alanwilter/solaraccelerator_ha",
+  "integration_type": "service",
+  "iot_class": "cloud_push",
+  "requirements": ["aiohttp>=3.8.0"],
+  "version": "1.0.0",
+  "homeassistant": "2024.1.0"
+}

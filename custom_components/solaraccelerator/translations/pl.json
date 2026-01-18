@@ -1,0 +1,148 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SolarAccelerator - Klucz API",
+        "description": "Wprowadź klucz API wygenerowany w panelu SolarAccelerator.\n\nKlucz znajdziesz w: Integracje → Inwertery → Home Assistant API (Push)",
+        "data": {
+          "api_key": "Klucz API",
+          "server_url": "Adres serwera",
+          "send_interval": "Interwał wysyłania (sekundy)"
+        },
+        "data_description": {
+          "api_key": "Klucz w formacie sa_haapi_...",
+          "server_url": "Domyślnie: https://solaraccelerator.cloud",
+          "send_interval": "Minimalnie 60 sekund (zalecane: 60)"
+        }
+      },
+      "entities_pv": {
+        "title": "Mapowanie encji - Panele fotowoltaiczne (PV)",
+        "description": "Wybierz encje z Home Assistant odpowiadające danym z paneli PV.\n\nKażda encja musi być zmapowana.",
+        "data": {
+          "day_pv_energy": "Dzienna produkcja PV (kWh)",
+          "pv1_power": "Moc PV string 1 (W)",
+          "pv2_power": "Moc PV string 2 (W)",
+          "pv1_voltage": "Napięcie PV string 1 (V)",
+          "pv2_voltage": "Napięcie PV string 2 (V)",
+          "pv1_current": "Prąd PV string 1 (A)",
+          "pv2_current": "Prąd PV string 2 (A)",
+          "total_pv_generation": "Całkowita generacja PV (kWh)"
+        }
+      },
+      "entities_battery": {
+        "title": "Mapowanie encji - Bateria",
+        "description": "Wybierz encje z Home Assistant odpowiadające danym baterii.",
+        "data": {
+          "day_battery_discharge": "Dzienne rozładowanie baterii (kWh)",
+          "day_battery_charge": "Dzienne ładowanie baterii (kWh)",
+          "battery_power": "Moc baterii (W)",
+          "battery_current": "Prąd baterii (A)",
+          "battery_temp": "Temperatura baterii (°C)",
+          "battery_voltage": "Napięcie baterii (V)",
+          "battery_soc": "Stan naładowania baterii (%)",
+          "battery_soh": "Stan zdrowia baterii (%)"
+        },
+        "data_description": {
+          "battery_power": "+ ładowanie, - rozładowanie"
+        }
+      },
+      "entities_inverter": {
+        "title": "Mapowanie encji - Inwerter",
+        "description": "Wybierz encje z Home Assistant odpowiadające danym inwertera.",
+        "data": {
+          "inverter_status": "Status inwertera",
+          "inverter_voltage_l1": "Napięcie L1 (V)",
+          "inverter_voltage_l2": "Napięcie L2 (V)",
+          "inverter_voltage_l3": "Napięcie L3 (V)",
+          "inverter_current_l1": "Prąd L1 (A)",
+          "inverter_current_l2": "Prąd L2 (A)",
+          "inverter_current_l3": "Prąd L3 (A)",
+          "inverter_power": "Moc inwertera (W)"
+        }
+      },
+      "entities_grid": {
+        "title": "Mapowanie encji - Sieć",
+        "description": "Wybierz encje z Home Assistant odpowiadające danym sieci elektrycznej.",
+        "data": {
+          "grid_power": "Moc sieci (W)",
+          "grid_ct_power_l1": "Moc CT L1 (W)",
+          "grid_ct_power_l2": "Moc CT L2 (W)",
+          "grid_ct_power_l3": "Moc CT L3 (W)",
+          "day_grid_import": "Dzienny pobór z sieci (kWh)",
+          "day_grid_export": "Dzienne oddanie do sieci (kWh)",
+          "grid_connected_status": "Status połączenia z siecią"
+        },
+        "data_description": {
+          "grid_power": "+ pobór z sieci, - oddawanie do sieci"
+        }
+      },
+      "entities_load": {
+        "title": "Mapowanie encji - Obciążenie",
+        "description": "Wybierz encje z Home Assistant odpowiadające danym obciążenia.",
+        "data": {
+          "day_load_energy": "Dzienne zużycie (kWh)",
+          "load_power_l1": "Moc obciążenia L1 (W)",
+          "load_power_l2": "Moc obciążenia L2 (W)",
+          "load_power_l3": "Moc obciążenia L3 (W)",
+          "load_frequency": "Częstotliwość sieci (Hz)"
+        }
+      },
+      "entities_temp": {
+        "title": "Mapowanie encji - Temperatury",
+        "description": "Wybierz encje z Home Assistant odpowiadające danym temperatur.",
+        "data": {
+          "radiator_temp": "Temperatura radiatora (°C)",
+          "dc_transformer_temp": "Temperatura transformatora DC (°C)"
+        }
+      }
+    },
+    "error": {
+      "invalid_api_key": "Nieprawidłowy klucz API",
+      "invalid_api_key_format": "Klucz API musi zaczynać się od 'sa_haapi_' i mieć minimum 40 znaków",
+      "cannot_connect": "Nie można połączyć się z serwerem",
+      "invalid_url": "Nieprawidłowy adres URL",
+      "invalid_interval": "Interwał musi wynosić co najmniej 60 sekund",
+      "entity_required": "To pole jest wymagane",
+      "unknown": "Nieznany błąd"
+    },
+    "abort": {
+      "no_entities": "Brak dostępnych encji w Home Assistant"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje SolarAccelerator",
+        "data": {
+          "send_interval": "Interwał wysyłania (sekundy)"
+        },
+        "data_description": {
+          "send_interval": "Minimalnie 60 sekund"
+        }
+      }
+    },
+    "error": {
+      "invalid_interval": "Interwał musi wynosić co najmniej 60 sekund"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "connection_status": {
+        "name": "Status połączenia",
+        "state": {
+          "connected": "Połączony",
+          "disconnected": "Rozłączony",
+          "error": "Błąd",
+          "auth_error": "Błąd autoryzacji",
+          "unknown": "Nieznany"
+        }
+      },
+      "last_sent": {
+        "name": "Ostatnie wysłanie"
+      },
+      "entities_sent": {
+        "name": "Wysłane encje"
+      }
+    }
+  }
+}
