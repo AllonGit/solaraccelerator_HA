@@ -170,8 +170,8 @@
       }
     },
     "button": {
-      "force_send": {
-        "name": "Force Send Data"
+      "sync": {
+        "name": "Synchronize"
       }
     }
   }
