@@ -115,6 +115,7 @@
       "invalid_api_key": "Invalid API key",
       "invalid_api_key_format": "API key must start with 'sa_haapi_' and be at least 40 characters",
       "cannot_connect": "Cannot connect to server",
+      "integration_disabled": "Integration is disabled. Enable it in SolarAccelerator settings.",
       "invalid_url": "Invalid URL",
       "entity_required": "This field is required",
       "prefix_required": "Prefix is required",

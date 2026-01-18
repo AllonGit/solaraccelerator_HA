@@ -47,37 +47,30 @@ async def async_validate_api_key(
     api_key: str,
     server_url: str,
 ) -> dict[str, Any]:
-    """Validate API key by making a test request."""
+    """Validate API key by making a connection test request (GET)."""
     try:
         session = async_get_clientsession(hass)
         server_url = server_url.rstrip("/")
         endpoint = f"{server_url}{API_PUSH_ENDPOINT}"
 
-        _LOGGER.debug("Validating API key at: %s", endpoint)
+        _LOGGER.debug("Testing connection at: %s", endpoint)
 
-        async with session.post(
+        async with session.get(
             endpoint,
-            json={
-                "timestamp": "2000-01-01T00:00:00Z",
-                "entities": {
-                    "pv1_power": 0,
-                },
-            },
             headers={
                 "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
             },
             timeout=aiohttp.ClientTimeout(total=30),
         ) as resp:
             text = await resp.text()
             _LOGGER.debug("API response: status=%s, body=%s", resp.status, text[:200])
 
-            if resp.status in (200, 201):
+            if resp.status == 200:
                 return {"success": True}
             elif resp.status == 401:
                 return {"success": False, "error": "invalid_api_key"}
             elif resp.status == 403:
-                return {"success": False, "error": "invalid_api_key"}
+                return {"success": False, "error": "integration_disabled"}
             else:
                 _LOGGER.error("API validation failed: %s - %s", resp.status, text)
                 return {"success": False, "error": "cannot_connect"}
