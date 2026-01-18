@@ -146,6 +146,27 @@
       },
       "entities_sent": {
         "name": "Entities Sent"
+      },
+      "current_price": {
+        "name": "Current Energy Price"
+      },
+      "min_price": {
+        "name": "Min Price Today"
+      },
+      "max_price": {
+        "name": "Max Price Today"
+      },
+      "average_price": {
+        "name": "Average Price Today"
+      },
+      "is_cheap": {
+        "name": "Cheap Energy"
+      },
+      "is_expensive": {
+        "name": "Expensive Energy"
+      },
+      "price_provider": {
+        "name": "Price Provider"
       }
     },
     "button": {

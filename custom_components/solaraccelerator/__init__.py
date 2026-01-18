@@ -33,6 +33,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "last_response": None,
         "connection_status": "unknown",
         "entities_sent": 0,
+        # Price data
+        "prices": {
+            "current_price": None,
+            "min_price": None,
+            "max_price": None,
+            "average_price": None,
+            "is_cheap": None,
+            "is_expensive": None,
+            "provider": None,
+            "updated_at": None,
+        },
+        "prices_last_update": None,
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

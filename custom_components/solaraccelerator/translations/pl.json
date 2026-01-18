@@ -146,6 +146,27 @@
       },
       "entities_sent": {
         "name": "Wysłane encje"
+      },
+      "current_price": {
+        "name": "Aktualna cena energii"
+      },
+      "min_price": {
+        "name": "Min cena dziś"
+      },
+      "max_price": {
+        "name": "Max cena dziś"
+      },
+      "average_price": {
+        "name": "Średnia cena dziś"
+      },
+      "is_cheap": {
+        "name": "Tania energia"
+      },
+      "is_expensive": {
+        "name": "Droga energia"
+      },
+      "price_provider": {
+        "name": "Dostawca cen"
       }
     },
     "button": {

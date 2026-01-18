@@ -22,6 +22,7 @@ from .const import (
     CONF_ENTITY_MAPPING,
     CONF_SOLARMAN_PREFIX,
     API_SEND_DATA_ENDPOINT,
+    API_PRICES_ENDPOINT,
     ENTITY_KEYS,
 )
 
@@ -42,7 +43,18 @@ async def async_setup_entry(
         SolarAcceleratorLastSentSensor(hass, entry, coordinator_data),
         SolarAcceleratorNextScheduledSensor(hass, entry, coordinator_data),
         SolarAcceleratorEntitiesCountSensor(hass, entry, coordinator_data),
+        # Price sensors
+        SolarAcceleratorCurrentPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorMinPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorMaxPriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorAveragePriceSensor(hass, entry, coordinator_data),
+        SolarAcceleratorIsCheapSensor(hass, entry, coordinator_data),
+        SolarAcceleratorIsExpensiveSensor(hass, entry, coordinator_data),
+        SolarAcceleratorPriceProviderSensor(hass, entry, coordinator_data),
     ])
+
+    # Fetch prices immediately on startup
+    hass.async_create_task(async_fetch_prices(hass, coordinator_data))
 
     # Start hourly data sending task
     task = hass.async_create_task(
@@ -167,6 +179,174 @@ class SolarAcceleratorEntitiesCountSensor(SolarAcceleratorSensorBase):
         return self.coordinator_data.get("entities_sent", 0)
 
 
+# Price sensors
+
+class SolarAcceleratorCurrentPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for current energy price."""
+
+    _attr_icon = "mdi:currency-usd"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "current_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "current_price")
+        self._attr_name = "Aktualna cena energii"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("current_price")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra state attributes."""
+        prices = self.coordinator_data.get("prices", {})
+        return {
+            "is_cheap": prices.get("is_cheap"),
+            "is_expensive": prices.get("is_expensive"),
+            "current_hour": prices.get("current_hour"),
+            "updated_at": prices.get("updated_at"),
+        }
+
+
+class SolarAcceleratorMinPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for minimum price today."""
+
+    _attr_icon = "mdi:arrow-down-bold"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "min_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "min_price")
+        self._attr_name = "Min cena dziś"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("min_price")
+
+
+class SolarAcceleratorMaxPriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for maximum price today."""
+
+    _attr_icon = "mdi:arrow-up-bold"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "max_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "max_price")
+        self._attr_name = "Max cena dziś"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("max_price")
+
+
+class SolarAcceleratorAveragePriceSensor(SolarAcceleratorSensorBase):
+    """Sensor for average price today."""
+
+    _attr_icon = "mdi:chart-line"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "zł/kWh"
+    _attr_translation_key = "average_price"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "average_price")
+        self._attr_name = "Średnia cena dziś"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("average_price")
+
+
+class SolarAcceleratorIsCheapSensor(SolarAcceleratorSensorBase):
+    """Sensor for cheap energy indicator."""
+
+    _attr_icon = "mdi:cash-check"
+    _attr_translation_key = "is_cheap"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "is_cheap")
+        self._attr_name = "Tania energia"
+
+    @property
+    def native_value(self) -> bool | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("is_cheap")
+
+
+class SolarAcceleratorIsExpensiveSensor(SolarAcceleratorSensorBase):
+    """Sensor for expensive energy indicator."""
+
+    _attr_icon = "mdi:cash-remove"
+    _attr_translation_key = "is_expensive"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "is_expensive")
+        self._attr_name = "Droga energia"
+
+    @property
+    def native_value(self) -> bool | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("is_expensive")
+
+
+class SolarAcceleratorPriceProviderSensor(SolarAcceleratorSensorBase):
+    """Sensor for price provider."""
+
+    _attr_icon = "mdi:domain"
+    _attr_translation_key = "price_provider"
+
+    def __init__(
+        self, hass: HomeAssistant, entry: ConfigEntry, coordinator_data: dict[str, Any]
+    ) -> None:
+        """Initialize."""
+        super().__init__(hass, entry, coordinator_data, "price_provider")
+        self._attr_name = "Dostawca cen"
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the state."""
+        prices = self.coordinator_data.get("prices", {})
+        return prices.get("provider")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra state attributes."""
+        return {
+            "prices_last_update": self.coordinator_data.get("prices_last_update"),
+        }
+
+
 def convert_value(value: str | None, entity_key: str) -> float | int | bool | str | None:
     """Convert entity value to appropriate type for API."""
     if value is None or value in ("unknown", "unavailable", ""):
@@ -283,6 +463,53 @@ async def async_send_data(
     return False
 
 
+async def async_fetch_prices(
+    hass: HomeAssistant,
+    coordinator_data: dict[str, Any],
+) -> bool:
+    """Fetch prices from server. Returns True on success."""
+    api_key = coordinator_data.get(CONF_API_KEY)
+    server_url = coordinator_data.get(CONF_SERVER_URL)
+
+    session = async_get_clientsession(hass)
+    endpoint = f"{server_url}{API_PRICES_ENDPOINT}"
+
+    try:
+        async with session.get(
+            endpoint,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+            },
+            timeout=aiohttp.ClientTimeout(total=30),
+        ) as resp:
+            if resp.status == 200:
+                data = await resp.json()
+                coordinator_data["prices"] = {
+                    "current_price": data.get("current_price"),
+                    "min_price": data.get("min_price"),
+                    "max_price": data.get("max_price"),
+                    "average_price": data.get("average_price"),
+                    "is_cheap": data.get("is_cheap"),
+                    "is_expensive": data.get("is_expensive"),
+                    "provider": data.get("provider"),
+                    "updated_at": data.get("updated_at"),
+                }
+                coordinator_data["prices_last_update"] = dt_util.now().strftime("%Y-%m-%d %H:%M:%S")
+                _LOGGER.info("Prices fetched successfully from %s", endpoint)
+                return True
+            elif resp.status == 404:
+                _LOGGER.warning("No price data available: %s", await resp.text())
+            else:
+                _LOGGER.error("Failed to fetch prices: %s", resp.status)
+
+    except aiohttp.ClientError as e:
+        _LOGGER.error("Connection error fetching prices: %s", e)
+    except Exception as e:
+        _LOGGER.exception("Error fetching prices: %s", e)
+
+    return False
+
+
 async def async_send_data_hourly(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -306,8 +533,9 @@ async def async_send_data_hourly(
             # Wait until next full hour
             await asyncio.sleep(seconds_to_wait)
 
-            # Send data
+            # Send data and fetch prices
             await async_send_data(hass, coordinator_data)
+            await async_fetch_prices(hass, coordinator_data)
 
         except asyncio.CancelledError:
             _LOGGER.debug("Hourly data sending task cancelled")
