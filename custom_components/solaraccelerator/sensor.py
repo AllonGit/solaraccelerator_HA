@@ -80,7 +80,7 @@ async def async_setup_entry(
 class SolarAcceleratorSensorBase(SensorEntity):
     """Base class for Solar Accelerator sensors."""
 
-    _attr_has_entity_name = True
+    #_attr_has_entity_name = True
 
     def __init__(
         self,
