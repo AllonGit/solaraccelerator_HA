@@ -568,7 +568,7 @@ def convert_value(value: str | None, entity_key: str) -> float | int | bool | st
 def get_next_full_hour() -> datetime:
     """Get the next full hour + 1 second timestamp."""
     now = dt_util.now()
-    next_hour = now.replace(minute=0, second=1, microsecond=0) + timedelta(hours=1)
+    next_hour = now.replace(minute=0, second=5, microsecond=0) + timedelta(hours=1)
     return next_hour
 
 
