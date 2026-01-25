@@ -568,7 +568,7 @@ def convert_value(value: str | None, entity_key: str) -> float | int | bool | st
 def get_next_full_hour() -> datetime:
     """Get the next full hour + 1 second timestamp."""
     now = dt_util.now()
-    next_hour = now.replace(minute=0, second=5, microsecond=0) + timedelta(hours=1)
+    next_hour = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
     return next_hour
 
 
@@ -821,21 +821,21 @@ async def async_send_data_hourly(
             # Wait until next full hour
             await asyncio.sleep(seconds_to_wait)
 
-            # Step 1: Send data to server
+            # Step 1: Send data and fetch prices immediately (no waiting)
             send_success = await async_send_data(hass, coordinator_data)
+            await async_fetch_prices(hass, coordinator_data)
 
             if send_success:
-                # Step 2: Poll data_ready endpoint until server confirms processing
-                max_retries = 12  # Max 2 minutes (12 * 10 seconds)
+                # Step 2: Poll data_ready endpoint only for profit data
+                max_retries = 30  # Max 2 minutes (12 * 10 seconds)
                 retry_interval = 10  # seconds
 
                 for attempt in range(max_retries):
                     is_ready = await async_check_data_ready(hass, coordinator_data)
 
                     if is_ready:
-                        # Step 3: Data processed, fetch updated prices and profit
-                        _LOGGER.info("Server data ready, fetching prices and profit")
-                        await async_fetch_prices(hass, coordinator_data)
+                        # Step 3: Data processed, fetch updated profit
+                        _LOGGER.info("Server data ready, fetching profit")
                         await async_fetch_profit(hass, coordinator_data)
                         break
 
@@ -848,7 +848,7 @@ async def async_send_data_hourly(
                     await asyncio.sleep(retry_interval)
                 else:
                     _LOGGER.warning(
-                        "Data ready timeout after %d retries, skipping sensor update",
+                        "Data ready timeout after %d retries, skipping profit update",
                         max_retries,
                     )
 
