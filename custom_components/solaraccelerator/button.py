@@ -33,7 +33,7 @@ async def async_setup_entry(
 class SolarAcceleratorSyncButton(ButtonEntity):
     """Button to synchronize data with SolarAccelerator."""
 
-    _attr_has_entity_name = True
+    #_attr_has_entity_name = True
     _attr_icon = "mdi:sync"
     _attr_translation_key = "sync"
 
