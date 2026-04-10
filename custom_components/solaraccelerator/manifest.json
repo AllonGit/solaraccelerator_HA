@@ -1,6 +1,6 @@
 {
   "domain": "solaraccelerator",
-  "name": "SolarAccelerator",
+  "name": "Solar Accelerator",
   "codeowners": ["@aLAN-LDZ"],
   "config_flow": true,
   "documentation": "https://github.com/aLAN-LDZ/solaraccelerator_HA",
@@ -8,5 +8,5 @@
   "iot_class": "cloud_push",
   "issue_tracker": "https://github.com/aLAN-LDZ/solaraccelerator_HA/issues",
   "requirements": ["aiohttp>=3.8.0"],
-  "version": "1.0.0"
+  "version": "0.0.2"
 }
