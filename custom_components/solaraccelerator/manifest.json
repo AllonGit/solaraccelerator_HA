@@ -1,6 +1,6 @@
 {
   "domain": "solaraccelerator",
-  "name": "SolarAccelerator",
+  "name": "Solar Accelerator",
   "codeowners": ["@aLAN-LDZ"],
   "config_flow": true,
   "documentation": "https://github.com/aLAN-LDZ/solaraccelerator_HA",
