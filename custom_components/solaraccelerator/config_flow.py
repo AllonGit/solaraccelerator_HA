@@ -291,9 +291,9 @@ class SolarAcceleratorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     def _create_entry(self) -> FlowResult:
         """Create the config entry."""
-        title = "SolarAccelerator"
+        title = "Solar Accelerator"
         if self.config_mode == CONFIG_MODE_SOLARMAN:
-            title = f"SolarAccelerator ({self.solarman_prefix})"
+            title = f"Solar Accelerator ({self.solarman_prefix})"
 
         return self.async_create_entry(
             title=title,

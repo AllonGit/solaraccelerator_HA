@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "SolarAccelerator - API Key",
-        "description": "Enter the API key generated in the SolarAccelerator dashboard.\n\nFind your key at: Integrations → Inverters → Home Assistant",
+        "title": "Solar Accelerator - API Key",
+        "description": "Enter the API key generated in the Solar Accelerator dashboard.\n\nFind your key at: Integrations → Inverters → Home Assistant",
         "data": {
           "api_key": "API Key",
           "server_url": "Server URL"
@@ -115,7 +115,7 @@
       "invalid_api_key": "Invalid API key",
       "invalid_api_key_format": "API key must start with 'sa_haapi_' and be at least 40 characters",
       "cannot_connect": "Cannot connect to server",
-      "integration_disabled": "Integration is disabled. Enable it in SolarAccelerator settings.",
+      "integration_disabled": "Integration is disabled. Enable it in Solar Accelerator settings.",
       "invalid_url": "Invalid URL",
       "entity_required": "This field is required",
       "prefix_required": "Prefix is required",
@@ -188,6 +188,23 @@
       },
       "battery_avg_price": {
         "name": "Battery Avg Price"
+      },
+      "live_status": {
+        "name": "Live Status",
+        "state": {
+          "live": "Active",
+          "inactive": "Inactive",
+          "disabled": "Disabled by admin",
+          "rate_limited": "Rate limited",
+          "auth_error": "Authentication error",
+          "error": "Error"
+        }
+      },
+      "live_last_push": {
+        "name": "Last Live Push"
+      },
+      "live_interval": {
+        "name": "Live Interval"
       }
     },
     "button": {

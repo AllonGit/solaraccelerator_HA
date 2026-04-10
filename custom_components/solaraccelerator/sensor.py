@@ -116,8 +116,8 @@ class SolarAcceleratorSensorBase(SensorEntity):
         """Return device info."""
         return DeviceInfo(
             identifiers={(DOMAIN, self.entry.entry_id)},
-            name="SolarAccelerator",
-            manufacturer="SolarAccelerator",
+            name="Solar Accelerator",
+            manufacturer="Solar Accelerator",
             model="Home Assistant Integration",
             entry_type=DeviceEntryType.SERVICE,
         )

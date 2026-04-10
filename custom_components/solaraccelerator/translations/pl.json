@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "SolarAccelerator - Klucz API",
-        "description": "Wprowadź klucz API wygenerowany w panelu SolarAccelerator.\n\nKlucz znajdziesz w: Integracje → Inwertery → Home Assistant",
+        "title": "Solar Accelerator - Klucz API",
+        "description": "Wprowadź klucz API wygenerowany w panelu Solar Accelerator.\n\nKlucz znajdziesz w: Integracje → Inwertery → Home Assistant",
         "data": {
           "api_key": "Klucz API",
           "server_url": "Adres serwera"
@@ -115,7 +115,7 @@
       "invalid_api_key": "Nieprawidłowy klucz API",
       "invalid_api_key_format": "Klucz API musi zaczynać się od 'sa_haapi_' i mieć minimum 40 znaków",
       "cannot_connect": "Nie można połączyć się z serwerem",
-      "integration_disabled": "Integracja jest wyłączona. Włącz ją w ustawieniach SolarAccelerator.",
+      "integration_disabled": "Integracja jest wyłączona. Włącz ją w ustawieniach Solar Accelerator.",
       "invalid_url": "Nieprawidłowy adres URL",
       "entity_required": "To pole jest wymagane",
       "prefix_required": "Prefix jest wymagany",
