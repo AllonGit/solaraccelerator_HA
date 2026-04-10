@@ -1011,8 +1011,21 @@ async def async_send_live_data(
             elif resp.status == 429:
                 coordinator_data["live_status"] = "rate_limited"
                 retry_after = int(resp.headers.get("Retry-After", "5"))
-                _LOGGER.debug("Live rate limited, retry after %ds", retry_after)
-                return ("rate_limited", None, retry_after)
+                # Próbuj odczytać nowy interwał z body — serwer go zwraca
+                # żeby klient mógł zaktualizować interwał nawet w pętli 429
+                live_interval = None
+                try:
+                    data = await resp.json()
+                    if server_iv := data.get("live_interval_seconds"):
+                        live_interval = server_iv
+                        coordinator_data["live_interval_seconds"] = server_iv
+                except Exception:
+                    pass
+                _LOGGER.debug(
+                    "Live rate limited, retry after %ds, server interval=%s",
+                    retry_after, live_interval
+                )
+                return ("rate_limited", live_interval, retry_after)
 
             elif resp.status == 401:
                 coordinator_data["live_status"] = "auth_error"
@@ -1054,26 +1067,31 @@ async def async_send_live_data_loop(
                 hass, coordinator_data
             )
 
+            # Aktualizuj interwał natychmiast jeśli serwer go dostarczył
+            # (zarówno z 200 jak i z 429 — żeby wyjść z pętli rate limit)
+            if server_interval:
+                interval = server_interval
+
             if status == "ok":
-                # Use interval from server if provided
-                if server_interval:
-                    interval = server_interval
                 await asyncio.sleep(interval)
 
             elif status == "disabled":
-                # Server has live channel off — check again after a minute
+                # Kanał wyłączony przez admina — sprawdź ponownie za minutę
                 await asyncio.sleep(LIVE_DISABLED_RETRY)
 
             elif status == "rate_limited":
-                # Server says we're too fast — wait what it tells us
-                await asyncio.sleep(retry_after or interval)
+                # Zbyt szybki push — poczekaj co najmniej tyle ile nowy interwał
+                # żeby od razu zsynchronizować się z nowym rytmem serwera
+                wait = max(retry_after or 5, interval)
+                _LOGGER.debug("Rate limited: sleeping %ds (interval=%ds)", wait, interval)
+                await asyncio.sleep(wait)
 
             elif status == "auth_error":
-                # Bad API key — no point hammering server
+                # Zły klucz — nie hammerjemy serwera
                 await asyncio.sleep(LIVE_AUTH_RETRY)
 
             else:
-                # Generic error — wait normal interval before retry
+                # Błąd sieciowy — normalna przerwa przed retry
                 await asyncio.sleep(interval)
 
         except asyncio.CancelledError:
